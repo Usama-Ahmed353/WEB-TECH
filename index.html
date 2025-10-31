@@ -156,16 +156,182 @@
         </div>
     </section>
 
-    <footer class="footer">
+    <!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="testimonials-container">
+        <h2>Customer Testimonials</h2>
+        <p class="testimonials-subtitle">See what our customers say about our delicious pizzas!</p>
+        
+        <!-- Initial View - Two Cards Only -->
+        <div class="testimonials-initial" id="testimonialsInitial">
+            <div class="testimonials-grid-initial">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="customer-info">
+                            <div class="customer-avatar">
+                                <img src="images/photo1.jpeg" alt="John Smith" onerror="this.style.display='none'">
+                            </div>
+                            <div class="customer-details">
+                                <h4>John Smith</h4>
+                                <div class="star-rating">
+                                    ★★★★★
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"The best pizza I've ever had! The crust is perfectly crispy and the ingredients are always fresh. BePizza never disappoints!"</p>
+                </div>
 
-            <img src="images/BonAppetit.png" alt="Bon appetit!" class="animate bon-appetit-img">
-
-            <div class="copyright">
-                <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="customer-info">
+                            <div class="customer-avatar">
+                                <img src="images/photo2.jpeg" alt="Sarah Johnson" onerror="this.style.display='none'">
+                            </div>
+                            <div class="customer-details">
+                                <h4>Sarah Johnson</h4>
+                                <div class="star-rating">
+                                    ★★★★☆
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"Amazing service and even better pizza! The delivery is always fast and the food arrives hot. My go-to pizza place!"</p>
+                </div>
+            </div>
         </div>
-    </footer>
+
+        <!-- All Testimonials Grid - Hidden Initially -->
+        <div class="testimonials-grid-all hidden" id="testimonialsAll">
+            <!-- Testimonial 1 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="customer-info">
+                        <div class="customer-avatar">
+                            <img src="images/photo1.jpeg" alt="John Smith" onerror="this.style.display='none'">
+                        </div>
+                        <div class="customer-details">
+                            <h4>John Smith</h4>
+                            <div class="star-rating">
+                                ★★★★★
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="testimonial-text">"The best pizza I've ever had! The crust is perfectly crispy and the ingredients are always fresh. BePizza never disappoints!"</p>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="customer-info">
+                        <div class="customer-avatar">
+                            <img src="images/photo2.jpeg" alt="Sarah Johnson" onerror="this.style.display='none'">
+                        </div>
+                        <div class="customer-details">
+                            <h4>Sarah Johnson</h4>
+                            <div class="star-rating">
+                                ★★★★☆
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="testimonial-text">"Amazing service and even better pizza! The delivery is always fast and the food arrives hot. My go-to pizza place!"</p>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="customer-info">
+                        <div class="customer-avatar">
+                            <img src="images/photo3.jpeg" alt="Mike Rodriguez" onerror="this.style.display='none'">
+                        </div>
+                        <div class="customer-details">
+                            <h4>Mike Rodriguez</h4>
+                            <div class="star-rating">
+                                ★★★★★
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="testimonial-text">"The Pizza Italiana is absolutely incredible! Authentic flavors that remind me of my trip to Naples. Highly recommended!"</p>
+            </div>
+
+            <!-- Testimonial 4 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="customer-info">
+                        <div class="customer-avatar">
+                            <img src="images/photo4.jpg" alt="Emily Chen" onerror="this.style.display='none'">
+                        </div>
+                        <div class="customer-details">
+                            <h4>Emily Chen</h4>
+                            <div class="star-rating">
+                                ★★★★☆
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="testimonial-text">"As a vegetarian, I appreciate the variety of options. The vegetarian pizza with extra mushrooms is my favorite!"</p>
+            </div>
+
+            <!-- Testimonial 5 -->
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="customer-info">
+                        <div class="customer-avatar">
+                            <img src="images/photo5.jpg" alt="David Brown" onerror="this.style.display='none'">
+                        </div>
+                        <div class="customer-details">
+                            <h4>David Brown</h4>
+                            <div class="star-rating">
+                                ★★★★★
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="testimonial-text">"Family pizza night is now BePizza night! My kids love the Picante pizza, and I love the quality ingredients. Perfect every time!"</p>
+            </div>
+        </div>
+
+        <button class="view-more-btn" id="viewMoreBtn">View All Testimonials</button>
+    </div>
+</section>
+
+<footer class="footer">
+    <img src="images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+    <div class="copyright">
+        <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewMoreBtn = document.getElementById('viewMoreBtn');
+        const testimonialsInitial = document.getElementById('testimonialsInitial');
+        const testimonialsAll = document.getElementById('testimonialsAll');
+        
+        let isShowingAll = false;
+
+        // Toggle between initial view and all testimonials
+        viewMoreBtn.addEventListener('click', function() {
+            if (!isShowingAll) {
+                // Switch to all testimonials view
+                testimonialsInitial.classList.add('hidden');
+                testimonialsAll.classList.remove('hidden');
+                viewMoreBtn.textContent = 'Show Less';
+                isShowingAll = true;
+            } else {
+                // Switch back to initial view
+                testimonialsAll.classList.add('hidden');
+                testimonialsInitial.classList.remove('hidden');
+                viewMoreBtn.textContent = 'View All Testimonials';
+                isShowingAll = false;
+            }
+        });
+    });
+</script>
 </body>
 </html>
-<style>   
-</style>
-    
