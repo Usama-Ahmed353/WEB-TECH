@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - BePizza</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .products-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+
+        .products-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .products-header h1 {
+            font-size: 3rem;
+            color: #B71C1C;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .products-header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .filters-section {
+            background: #f8f8f8;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        .filters-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #B71C1C;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #B71C1C;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #8B0000;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #666;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-category {
+            font-size: 0.8rem;
+            color: #B71C1C;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #B71C1C;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .product-order-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff4444, #ff3333);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .product-order-btn:hover {
+            background: linear-gradient(135deg, #ff3333, #ff2222);
+            transform: translateY(-2px);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .pagination-btn {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #B71C1C;
+            color: white;
+            border-color: #B71C1C;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            padding: 10px 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-products h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/images/BePizza.png" alt="BePizza Logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/restaurant">Restaurant</a></li>
+                <li><a href="/menu">Menu</a></li>
+                <li><a href="/products" class="active">Products</a></li>
+                <li><a href="/join">Join our team</a></li>
+                <li><a href="/locations">Locations</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="products-container">
+        <div class="products-header">
+            <h1>Our Products</h1>
+            <p>Browse our delicious selection of pizzas</p>
+        </div>
+
+        <div class="filters-section">
+            <h2 class="filters-title">Filter Products</h2>
+            <form id="filterForm" method="GET" action="/products">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="category">Category</label>
+                        <select name="category" id="category">
+                            <option value="all" <%= selectedCategory === 'all' ? 'selected' : '' %>>All Categories</option>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>><%= cat %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="minPrice">Min Price ($)</label>
+                        <input type="number" name="minPrice" id="minPrice" step="0.01" min="0" value="<%= minPrice %>" placeholder="0.00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="maxPrice">Max Price ($)</label>
+                        <input type="number" name="maxPrice" id="maxPrice" step="0.01" min="0" value="<%= maxPrice %>" placeholder="100.00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="limit">Items per Page</label>
+                        <select name="limit" id="limit">
+                            <option value="10" <%= limit === 10 ? 'selected' : '' %>>10</option>
+                            <option value="20" <%= limit === 20 ? 'selected' : '' %>>20</option>
+                            <option value="30" <%= limit === 30 ? 'selected' : '' %>>30</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="/products" class="btn btn-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <% if (products && products.length > 0) { %>
+            <div class="products-grid">
+                <% products.forEach(product => { %>
+                    <div class="product-card">
+                        <img src="<%= product.image %>" alt="<%= product.name %>" class="product-image" onerror="this.src='/images/pizza_image.png'">
+                        <div class="product-info">
+                            <div class="product-category"><%= product.category %></div>
+                            <h3 class="product-name"><%= product.name %></h3>
+                            <p class="product-description"><%= product.description %></p>
+                            <div class="product-price">$<%= product.price.toFixed(2) %></div>
+                            <button class="product-order-btn">Order Now</button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&limit=<%= limit %>" class="pagination-btn">Previous</a>
+                <% } else { %>
+                    <button class="pagination-btn" disabled>Previous</button>
+                <% } %>
+
+                <div class="pagination-info">
+                    Page <%= currentPage %> of <%= totalPages %> (<%= totalProducts %> products)
+                </div>
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&limit=<%= limit %>" class="pagination-btn">Next</a>
+                <% } else { %>
+                    <button class="pagination-btn" disabled>Next</button>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="no-products">
+                <h2>No products found</h2>
+                <p>Try adjusting your filters to see more products.</p>
+                <a href="/products" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">View All Products</a>
+            </div>
+        <% } %>
+    </div>
+
+    <footer class="footer">
+        <img src="/images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+        <div class="copyright">
+            <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+
