@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stories Management App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-warning { background-color: #ffc107; }
+    .btn-info { background-color: #17a2b8; color: white; }
+    .btn-danger { background-color: #dc3545; color: white; }
+    .btn-secondary { background-color: #6c757d; color: white; }
+
+    #loadingSpinner {
+      display: none;
+      text-align: center;
+      margin-top: 50px;
+      font-size: 20px;
+    }
+
+    .story-card {
+      background: white;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .story-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 4px;
+      color: #fff;
+      z-index: 9999;
+      animation: fadeIn 0.3s;
+    }
+
+    .notification.success { background-color: #28a745; }
+    .notification.error { background-color: #dc3545; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1050;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      overflow: auto;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 10px;
+    }
+
+    .close {
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    label { display: block; margin-top: 10px; }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      margin-top: 40px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Stories Manager</h1>
+  <button id="addStoryBtn" class="btn btn-info">Add New Story</button>
+
+  <div id="loadingSpinner">Loading stories...</div>
+  <div id="storiesList"></div>
+
+  <!-- Story Modal -->
+  <div id="storyModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add/Edit Story</h3>
+        <span class="close">&times;</span>
+      </div>
+      <form id="storyForm">
+        <input type="hidden" id="storyId" />
+        <label for="title">Title</label>
+        <input type="text" id="title" required />
+        <label for="content">Content</label>
+        <textarea id="content" required></textarea>
+        <label for="excerpt">Excerpt</label>
+        <textarea id="excerpt"></textarea>
+        <label for="status">Status</label>
+        <select id="status">
+          <option value="publish">Publish</option>
+          <option value="draft">Draft</option>
+        </select>
+        <div style="margin-top:15px;">
+          <button type="submit" class="btn btn-info">Save</button>
+          <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+        <span class="close">&times;</span>
+      </div>
+      <p>Are you sure you want to delete this story?</p>
+      <div style="margin-top:15px;">
+        <button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+        <button id="cancelDeleteBtn" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class StoriesAPI {
+      constructor(baseURL = "https://usmanlive.com/wp-json/api/stories") {
+        this.baseURL = baseURL;
+      }
+
+      async request(endpoint = "", options = {}) {
+        const url = endpoint ? `${this.baseURL}/${endpoint}` : this.baseURL;
+        const config = {
+          headers: { "Content-Type": "application/json" },
+          ...options
+        };
+        try {
+          const response = await fetch(url, config);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          return await response.json();
+        } catch (error) {
+          console.error("API request failed:", error);
+          throw error;
+        }
+      }
+
+      createStory(data) {
+        return this.request("", { method: "POST", body: JSON.stringify(data) });
+      }
+      getAllStories() { return this.request(); }
+      getStory(id) { return this.request(id); }
+      updateStory(id, data) {
+        return this.request(id, { method: "PUT", body: JSON.stringify(data) });
+      }
+      deleteStory(id) {
+        return this.request(id, { method: "DELETE" });
+      }
+    }
+
+    class StoriesApp {
+      constructor() {
+        this.api = new StoriesAPI();
+        this.stories = [];
+        this.currentStoryId = null;
+        this.initializeElements();
+        this.attachEventListeners();
+        this.loadStories();
+      }
+
+      initializeElements() {
+        this.storiesList = document.getElementById("storiesList");
+        this.loadingSpinner = document.getElementById("loadingSpinner");
+        this.storyModal = document.getElementById("storyModal");
+        this.confirmModal = document.getElementById("confirmModal");
+        this.storyForm = document.getElementById("storyForm");
+        this.modalTitle = document.getElementById("modalTitle");
+        this.storyId = document.getElementById("storyId");
+        this.titleInput = document.getElementById("title");
+        this.contentInput = document.getElementById("content");
+        this.excerptInput = document.getElementById("excerpt");
+        this.statusInput = document.getElementById("status");
+        this.addStoryBtn = document.getElementById("addStoryBtn");
+        this.cancelBtn = document.getElementById("cancelBtn");
+        this.confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+        this.cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+        this.closeButtons = document.querySelectorAll(".close");
+      }
+
+      attachEventListeners() {
+        this.addStoryBtn.addEventListener("click", () => this.openAddModal());
+        this.storyForm.addEventListener("submit", (e) => this.handleFormSubmit(e));
+        this.cancelBtn.addEventListener("click", () => this.closeModal());
+        this.closeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            this.closeModal();
+            this.closeConfirmModal();
+          });
+        });
+        this.confirmDeleteBtn.addEventListener("click", () => this.confirmDelete());
+        this.cancelDeleteBtn.addEventListener("click", () => this.closeConfirmModal());
+        window.addEventListener("click", (e) => {
+          if (e.target === this.storyModal) this.closeModal();
+          if (e.target === this.confirmModal) this.closeConfirmModal();
+        });
+      }
+
+      async loadStories() {
+        this.showLoading();
+        try {
+          this.stories = await this.api.getAllStories();
+          this.renderStories();
+        } catch {
+          this.showError("Failed to load stories. Please try again.");
+        } finally {
+          this.hideLoading();
+        }
+      }
+
+      renderStories() {
+        if (!this.stories || this.stories.length === 0) {
+          this.storiesList.innerHTML =
+            '<div class="empty-state"><h3>No Stories Found</h3><p>Click "Add New Story" to create your first story.</p></div>';
+          return;
+        }
+
+        this.storiesList.innerHTML = this.stories
+          .map(
+            (story) => `
+          <div class="story-card" data-id="${story.id}">
+            <h3>${this.escapeHTML(story.title)}</h3>
+            <p><strong>Status:</strong> ${story.status}</p>
+            <p><strong>Date:</strong> ${new Date(story.date).toLocaleDateString()}</p>
+            <p>${this.escapeHTML(story.content ? story.content.substring(0, 120) : "")}...</p>
+            <div class="story-actions">
+              <button class="btn btn-warning" onclick="app.editStory(${story.id})">Edit</button>
+              <button class="btn btn-info" onclick="app.viewFullContent(${story.id})">View</button>
+              <button class="btn btn-danger" onclick="app.openDeleteModal(${story.id})">Delete</button>
+            </div>
+          </div>`
+          )
+          .join("");
+      }
+
+      openAddModal() {
+        this.modalTitle.textContent = "Add New Story";
+        this.resetForm();
+        this.storyModal.style.display = "block";
+      }
+
+      async editStory(id) {
+        try {
+          this.showLoading();
+          const story = await this.api.getStory(id);
+          this.populateForm(story);
+          this.modalTitle.textContent = "Edit Story";
+          this.storyModal.style.display = "block";
+        } catch {
+          this.showError("Failed to load story for editing.");
+        } finally {
+          this.hideLoading();
+        }
+      }
+
+      populateForm(story) {
+        this.storyId.value = story.id;
+        this.titleInput.value = story.title || "";
+        this.contentInput.value = story.content || "";
+        this.excerptInput.value = story.excerpt || "";
+        this.statusInput.value = story.status || "publish";
+      }
+
+      resetForm() {
+        this.storyId.value = "";
+        this.titleInput.value = "";
+        this.contentInput.value = "";
+        this.excerptInput.value = "";
+        this.statusInput.value = "publish";
+      }
+
+      async handleFormSubmit(e) {
+        e.preventDefault();
+        const data = {
+          title: this.titleInput.value.trim(),
+          content: this.contentInput.value.trim(),
+          excerpt: this.excerptInput.value.trim(),
+          status: this.statusInput.value,
+        };
+        if (!data.title || !data.content) {
+          this.showError("Title and content are required.");
+          return;
+        }
+        try {
+          if (this.storyId.value) {
+            await this.api.updateStory(this.storyId.value, data);
+            this.showSuccess("Story updated successfully!");
+          } else {
+            await this.api.createStory(data);
+            this.showSuccess("Story created successfully!");
+          }
+          this.closeModal();
+          await this.loadStories();
+        } catch {
+          this.showError("Failed to save story. Please try again.");
+        }
+      }
+
+      openDeleteModal(id) {
+        this.currentStoryId = id;
+        this.confirmModal.style.display = "block";
+      }
+
+      async confirmDelete() {
+        try {
+          await this.api.deleteStory(this.currentStoryId);
+          this.showSuccess("Story deleted!");
+          this.closeConfirmModal();
+          await this.loadStories();
+        } catch {
+          this.showError("Failed to delete story.");
+        }
+      }
+
+      closeModal() {
+        this.storyModal.style.display = "none";
+      }
+
+      closeConfirmModal() {
+        this.confirmModal.style.display = "none";
+      }
+
+      showLoading() {
+        this.loadingSpinner.style.display = "block";
+        this.storiesList.style.display = "none";
+      }
+
+      hideLoading() {
+        this.loadingSpinner.style.display = "none";
+        this.storiesList.style.display = "block";
+      }
+
+      showError(msg) {
+        this.showNotification(msg, "error");
+      }
+
+      showSuccess(msg) {
+        this.showNotification(msg, "success");
+      }
+
+      showNotification(message, type) {
+        const existing = document.querySelector(".notification");
+        if (existing) existing.remove();
+        const div = document.createElement("div");
+        div.className = `notification ${type}`;
+        div.textContent = message;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 4000);
+      }
+
+      escapeHTML(text) {
+        return text
+          ? text.replace(/[&<>"']/g, (m) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              }[m])
+            )
+          : "";
+      }
+    }
+
+    const app = new StoriesApp();
+  </script>
+</body>
+</html>
