@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title + ' - Admin Panel' : 'Admin Panel' %> - BePizza</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>BePizza Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/admin/products" class="nav-item">
+                    <span class="nav-icon">🍕</span>
+                    <span class="nav-text">Products</span>
+                </a>
+                <a href="/admin/products/add" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span class="nav-text">Add Product</span>
+                </a>
+                <a href="/products" class="nav-item" target="_blank">
+                    <span class="nav-icon">🌐</span>
+                    <span class="nav-text">View Website</span>
+                </a>
+                <a href="/" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Home</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Top Bar -->
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <h1 class="page-title"><%= typeof title !== 'undefined' ? title : 'Admin Panel' %></h1>
+                </div>
+                <div class="topbar-right">
+                    <span class="admin-badge">Administrator</span>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="admin-content">
+

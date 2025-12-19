@@ -1,0 +1,100 @@
+<%- include('partials/header', { title: 'Dashboard' }) %>
+
+<div class="dashboard-container">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">🍕</div>
+            <div class="stat-info">
+                <h3><%= totalProducts %></h3>
+                <p>Total Products</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📁</div>
+            <div class="stat-info">
+                <h3><%= categories %></h3>
+                <p>Categories</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+                <h3>Active</h3>
+                <p>System Status</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Statistics -->
+    <div class="dashboard-section">
+        <h2 class="section-title">Products by Category</h2>
+        <div class="category-stats">
+            <% Object.keys(categoryStats).forEach(category => { %>
+                <div class="category-stat-item">
+                    <span class="category-name"><%= category %></span>
+                    <span class="category-count"><%= categoryStats[category] %> products</span>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <!-- Recent Products -->
+    <div class="dashboard-section">
+        <h2 class="section-title">Recent Products</h2>
+        <div class="recent-products">
+            <% if (recentProducts.length > 0) { %>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentProducts.forEach(product => { %>
+                            <tr>
+                                <td>
+                                    <img src="<%= product.image %>" alt="<%= product.name %>" class="product-thumb">
+                                </td>
+                                <td><%= product.name %></td>
+                                <td><%= product.category %></td>
+                                <td>$<%= product.price.toFixed(2) %></td>
+                                <td>
+                                    <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-edit">Edit</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p class="no-data">No products found. <a href="/admin/products/add">Add your first product</a></p>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-section">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="quick-actions">
+            <a href="/admin/products/add" class="action-btn">
+                <span class="action-icon">➕</span>
+                <span>Add New Product</span>
+            </a>
+            <a href="/admin/products" class="action-btn">
+                <span class="action-icon">📋</span>
+                <span>View All Products</span>
+            </a>
+            <a href="/products" class="action-btn" target="_blank">
+                <span class="action-icon">👁️</span>
+                <span>View Website</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
