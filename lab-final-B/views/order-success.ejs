@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - BePizza</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .success-container {
+            max-width: 800px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+        .success-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .success-icon {
+            font-size: 5rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .success-header h1 {
+            font-size: 3rem;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        .order-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .order-info {
+            margin-bottom: 30px;
+        }
+        .order-info p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+        .order-info strong {
+            color: #B71C1C;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .badge-placed {
+            background: #ffc107;
+            color: #000;
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .order-table th {
+            background: #f8f8f8;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+        .order-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .order-table tfoot th {
+            background: #B71C1C;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        .btn-primary {
+            background: #B71C1C;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #8B0000;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/images/BePizza.png" alt="BePizza Logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/my-orders">My Orders</a></li>
+                <li><a href="/admin/orders">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="success-container">
+        <div class="success-header">
+            <div class="success-icon">✓</div>
+            <h1>Order Confirmed!</h1>
+            <p style="font-size: 1.2rem; color: #666;">Thank you for your order. Your order has been successfully placed.</p>
+        </div>
+
+        <div class="order-card">
+            <h2 style="color: #B71C1C; margin-bottom: 20px;">Order Summary</h2>
+            
+            <div class="order-info">
+                <p><strong>Order ID:</strong> <%= order.orderId %></p>
+                <p><strong>Email:</strong> <%= order.email %></p>
+                <p><strong>Status:</strong> 
+                    <span class="status-badge badge-placed"><%= order.status %></span>
+                </p>
+                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleString() %></p>
+                <% if (order.couponCode) { %>
+                    <p><strong>Coupon Code:</strong> <%= order.couponCode %></p>
+                <% } %>
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">Order Items:</h3>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% order.items.forEach(item => { %>
+                        <tr>
+                            <td><strong><%= item.name %></strong></td>
+                            <td><%= item.quantity %></td>
+                            <td>$<%= item.price.toFixed(2) %></td>
+                            <td>$<%= (item.price * item.quantity).toFixed(2) %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3">Subtotal:</th>
+                        <th>$<%= order.subtotal.toFixed(2) %></th>
+                    </tr>
+                    <% if (order.discount > 0) { %>
+                        <tr>
+                            <td colspan="3" style="color: #28a745;">Discount (<%= order.couponCode %>):</td>
+                            <td style="color: #28a745;">-$<%= order.discount.toFixed(2) %></td>
+                        </tr>
+                    <% } %>
+                    <tr>
+                        <th colspan="3">Total:</th>
+                        <th>$<%= order.total.toFixed(2) %></th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="actions">
+                <a href="/products" class="btn btn-primary">Continue Shopping</a>
+                <a href="/my-orders" class="btn btn-secondary">View Order History</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <img src="/images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+        <div class="copyright">
+            <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+

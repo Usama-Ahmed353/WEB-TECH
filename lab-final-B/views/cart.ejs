@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - BePizza</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .cart-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+        .cart-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .cart-header h1 {
+            font-size: 3rem;
+            color: #B71C1C;
+            margin-bottom: 10px;
+        }
+        .cart-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .cart-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .cart-table th {
+            background: #B71C1C;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .cart-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-table tr:last-child td {
+            border-bottom: none;
+        }
+        .cart-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: #B71C1C;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #8B0000;
+        }
+        .btn-secondary {
+            background: #666;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #444;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .empty-cart h2 {
+            font-size: 2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .total-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: right;
+        }
+        .total-section h3 {
+            font-size: 1.5rem;
+            color: #B71C1C;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/images/BePizza.png" alt="BePizza Logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart" class="active">Cart</a></li>
+                <li><a href="/my-orders">My Orders</a></li>
+                <li><a href="/admin/orders">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <h1>Shopping Cart</h1>
+        </div>
+
+        <% if (cart && cart.length > 0) { %>
+            <div class="cart-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% cart.forEach((item, index) => { %>
+                            <tr>
+                                <td><strong><%= item.name %></strong></td>
+                                <td>$<%= item.price.toFixed(2) %></td>
+                                <td><%= item.quantity %></td>
+                                <td>$<%= (item.price * item.quantity).toFixed(2) %></td>
+                                <td>
+                                    <form action="/cart/remove/<%= index %>" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="total-section">
+                <h3>Total: $<%= subtotal.toFixed(2) %></h3>
+            </div>
+            
+            <div class="cart-actions">
+                <a href="/order/preview" class="btn btn-primary">Proceed to Order Preview</a>
+                <a href="/products" class="btn btn-secondary">Continue Shopping</a>
+            </div>
+        <% } else { %>
+            <div class="empty-cart">
+                <h2>Your cart is empty</h2>
+                <p>Start shopping to add items to your cart.</p>
+                <a href="/products" class="btn btn-primary" style="margin-top: 20px;">Browse Products</a>
+            </div>
+        <% } %>
+    </div>
+
+    <footer class="footer">
+        <img src="/images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+        <div class="copyright">
+            <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+

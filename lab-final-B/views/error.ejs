@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Error' %> - BePizza</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        .error-icon {
+            font-size: 5rem;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        .error-container h1 {
+            font-size: 3rem;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        .error-container p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            background: #B71C1C;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #8B0000;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/images/BePizza.png" alt="BePizza Logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/my-orders">My Orders</a></li>
+                <li><a href="/admin/orders">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="error-container">
+        <div class="error-icon">⚠</div>
+        <h1><%= typeof title !== 'undefined' ? title : 'Error' %></h1>
+        <p><%= typeof message !== 'undefined' ? message : 'An error occurred' %></p>
+        <a href="/" class="btn">Go Home</a>
+    </div>
+
+    <footer class="footer">
+        <img src="/images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+        <div class="copyright">
+            <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+

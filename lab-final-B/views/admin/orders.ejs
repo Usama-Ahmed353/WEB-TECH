@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Orders - BePizza</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .admin-header h1 {
+            font-size: 3rem;
+            color: #B71C1C;
+            margin-bottom: 10px;
+        }
+        .orders-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .orders-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .orders-table th {
+            background: #B71C1C;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .orders-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .badge-placed {
+            background: #ffc107;
+            color: #000;
+        }
+        .badge-processing {
+            background: #0dcaf0;
+            color: #000;
+        }
+        .badge-delivered {
+            background: #28a745;
+            color: white;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+        .btn-primary {
+            background: #B71C1C;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #8B0000;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .text-muted {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/images/BePizza.png" alt="BePizza Logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/my-orders">My Orders</a></li>
+                <li><a href="/admin/orders" class="active">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Admin - Order Management</h1>
+            <p>Manage and update order statuses</p>
+        </div>
+
+        <% if (orders && orders.length > 0) { %>
+            <div class="orders-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Email</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td><strong><%= order.orderId %></strong></td>
+                                <td><%= order.email %></td>
+                                <td><%= new Date(order.createdAt).toLocaleString() %></td>
+                                <td><%= order.items.length %> item(s)</td>
+                                <td>$<%= order.total.toFixed(2) %></td>
+                                <td>
+                                    <span class="status-badge 
+                                        <% if (order.status === 'Placed') { %>badge-placed
+                                        <% } else if (order.status === 'Processing') { %>badge-processing
+                                        <% } else { %>badge-delivered<% } %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <% const nextStatus = statusFlow[order.status]; %>
+                                    <% if (nextStatus) { %>
+                                        <button class="btn btn-primary update-status-btn" 
+                                                data-order-id="<%= order._id %>" 
+                                                data-current-status="<%= order.status %>"
+                                                data-next-status="<%= nextStatus %>">
+                                            Update to <%= nextStatus %>
+                                        </button>
+                                    <% } else { %>
+                                        <span class="text-muted">Final Status</span>
+                                    <% } %>
+                                    <a href="/admin/orders/<%= order._id %>" class="btn btn-secondary">View Details</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert-info">
+                <h2>No orders found.</h2>
+            </div>
+        <% } %>
+    </div>
+
+    <footer class="footer">
+        <img src="/images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+        <div class="copyright">
+            <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.querySelectorAll('.update-status-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const orderId = this.dataset.orderId;
+                const nextStatus = this.dataset.nextStatus;
+                
+                if (!confirm(`Update order status to ${nextStatus}?`)) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`/admin/orders/${orderId}/status`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ newStatus: nextStatus })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                } catch (error) {
+                    alert('Error updating order status: ' + error.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

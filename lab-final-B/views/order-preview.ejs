@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Preview - BePizza</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .preview-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+        .preview-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .preview-header h1 {
+            font-size: 3rem;
+            color: #B71C1C;
+            margin-bottom: 10px;
+        }
+        .preview-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card h3 {
+            color: #B71C1C;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .order-table th {
+            background: #f8f8f8;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+        .order-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .summary-table {
+            width: 100%;
+        }
+        .summary-table td {
+            padding: 10px 0;
+        }
+        .summary-table .total-row {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #B71C1C;
+            border-top: 2px solid #B71C1C;
+            padding-top: 15px;
+        }
+        .discount-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .coupon-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .coupon-form {
+            display: flex;
+            gap: 10px;
+        }
+        .coupon-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .coupon-form button {
+            padding: 10px 20px;
+            background: #B71C1C;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/images/BePizza.png" alt="BePizza Logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/my-orders">My Orders</a></li>
+                <li><a href="/admin/orders">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="preview-container">
+        <div class="preview-header">
+            <h1>Order Preview</h1>
+            <p>Review your order before confirming</p>
+        </div>
+
+        <div class="preview-content">
+            <div>
+                <div class="card">
+                    <h3>Order Items</h3>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% cart.forEach(item => { %>
+                                <tr>
+                                    <td><strong><%= item.name %></strong></td>
+                                    <td>$<%= item.price.toFixed(2) %></td>
+                                    <td><%= item.quantity %></td>
+                                    <td>$<%= (item.price * item.quantity).toFixed(2) %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Apply Coupon Code</h3>
+                    <div class="coupon-section">
+                        <form action="/order/apply-coupon" method="POST" class="coupon-form">
+                            <input type="text" name="coupon" placeholder="Enter coupon code (e.g., SAVE10)" value="<%= couponCode || '' %>">
+                            <button type="submit">Apply</button>
+                        </form>
+                        <% if (couponCode && discount > 0) { %>
+                            <div class="alert-success">
+                                Coupon <strong><%= couponCode %></strong> applied! 10% discount: -$<%= discount.toFixed(2) %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3>Order Summary</h3>
+                    <table class="summary-table">
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td class="text-end">$<%= subtotal.toFixed(2) %></td>
+                        </tr>
+                        <% if (discount > 0) { %>
+                            <tr>
+                                <td>Discount (<%= couponCode %>):</td>
+                                <td class="text-end" style="color: #28a745;">-$<%= discount.toFixed(2) %></td>
+                            </tr>
+                        <% } %>
+                        <tr class="total-row">
+                            <td>Grand Total:</td>
+                            <td class="text-end">$<%= total.toFixed(2) %></td>
+                        </tr>
+                    </table>
+
+                    <form action="/order/confirm" method="POST" style="margin-top: 30px;">
+                        <input type="hidden" name="coupon" value="<%= couponCode || '' %>">
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required placeholder="your@email.com">
+                        </div>
+                        <button type="submit" class="btn btn-success">Confirm Order</button>
+                        <a href="/cart" class="btn btn-secondary">Go Back to Cart</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <img src="/images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+        <div class="copyright">
+            <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+

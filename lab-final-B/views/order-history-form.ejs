@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - BePizza</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .history-container {
+            max-width: 1000px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+        .history-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .history-header h1 {
+            font-size: 3rem;
+            color: #B71C1C;
+            margin-bottom: 10px;
+        }
+        .search-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #B71C1C;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #8B0000;
+        }
+        .orders-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .orders-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .orders-table th {
+            background: #B71C1C;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .orders-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .badge-placed {
+            background: #ffc107;
+            color: #000;
+        }
+        .badge-processing {
+            background: #0dcaf0;
+            color: #000;
+        }
+        .badge-delivered {
+            background: #28a745;
+            color: white;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/images/BePizza.png" alt="BePizza Logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/my-orders" class="active">My Orders</a></li>
+                <li><a href="/admin/orders">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="history-container">
+        <div class="history-header">
+            <h1>Order History</h1>
+        </div>
+
+        <div class="search-card">
+            <h2 style="margin-bottom: 20px; color: #B71C1C;">Enter Email to View Orders</h2>
+            <form action="/my-orders" method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="<%= email || '' %>" required placeholder="your@email.com">
+                </div>
+                <button type="submit" class="btn">View Orders</button>
+            </form>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger" style="margin-top: 20px;"><%= error %></div>
+            <% } %>
+        </div>
+
+        <% if (orders && orders.length > 0) { %>
+            <div class="orders-table">
+                <h2 style="padding: 20px; margin: 0; background: #f8f8f8; border-bottom: 2px solid #ddd;">
+                    Orders for <%= email %>
+                </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td><strong><%= order.orderId %></strong></td>
+                                <td><%= new Date(order.createdAt).toLocaleString() %></td>
+                                <td><%= order.items.length %> item(s)</td>
+                                <td>$<%= order.total.toFixed(2) %></td>
+                                <td>
+                                    <span class="status-badge 
+                                        <% if (order.status === 'Placed') { %>badge-placed
+                                        <% } else if (order.status === 'Processing') { %>badge-processing
+                                        <% } else { %>badge-delivered<% } %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else if (orders && orders.length === 0 && email) { %>
+            <div class="alert alert-info">
+                No orders found for email: <strong><%= email %></strong>
+            </div>
+        <% } %>
+    </div>
+
+    <footer class="footer">
+        <img src="/images/BonAppetit.png" alt="Bon appetit!" class="bon-appetit-img">
+        <div class="copyright">
+            <p>© 2023 BePizza by Muffin Group | All Rights Reserved | Powered by WordPress</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+
